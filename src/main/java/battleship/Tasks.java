@@ -63,8 +63,11 @@ public class Tasks {
 						myFleet.printStatus();
 					break;
 				case MAPA:
-					if (myFleet != null)
+					if (myFleet != null){
 						game.printMyBoard(false, true);
+						VisualizadorGrafico visualizador = new VisualizadorGrafico();
+						visualizador.mostrarTabuleiro(game);
+					}
 					break;
 				case RAJADA:
 					if (game != null) {
