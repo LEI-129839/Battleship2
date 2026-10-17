@@ -133,6 +133,14 @@
 			<version>${jetbrains.annotations.version}</version>
 			<scope>compile</scope>
 		</dependency>
+
+		<!-- Apache Commons Lang: StopWatch para medir o tempo de cada jogada -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.21.0</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
