@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
  * The type Tasks.
  */
 public class Tasks {
+
 	/**
 	 * The constant LOGGER.
 	 */
@@ -32,6 +33,7 @@ public class Tasks {
 	private static final String MAPA = "mapa";
 	private static final String STATUS = "estado";
 	private static final String SIMULA = "simula";
+	private static final String SCORES = "scores";
 
 	/**
 	 * This task also tests the fighting element of a round of three shots
@@ -40,6 +42,7 @@ public class Tasks {
 
 		IFleet myFleet = null;
 		IGame game = null;
+		ScoreboardManager manager = new ScoreboardManager();
 		menuHelp();
 
 		System.out.print("> ");
@@ -74,6 +77,7 @@ public class Tasks {
 
 						if (game.getRemainingShips() == 0) {
 							game.over();
+							manager.registerWin("Java Sparrow");
 							System.exit(0);
 						}
 					}
@@ -87,15 +91,23 @@ public class Tasks {
 							try {
 								Thread.sleep(3000);
 							} catch (InterruptedException e) {
-								Thread.currentThread().interrupt(); // Best practice: restore interrupt status
+								Thread.currentThread().interrupt();
 							}
 						}
 
 						if (game.getRemainingShips() == 0) {
 							game.over();
+							manager.registerWin("Java Sparrow");
 							System.exit(0);
 						}
 					}
+					break;
+				case SCORES:
+					System.out.println("=== TABELA CLASSIFICATÓRIA ===");
+					for (PlayerScore ps : manager.getSortedScores()) {
+						System.out.println(ps.toString());
+					}
+					System.out.println("=============================");
 					break;
 				case TIROS:
 					if (game != null)
@@ -127,7 +139,9 @@ public class Tasks {
 		System.out.println("- " + SIMULA + ": Simula um jogo completo.");
 		System.out.println("- " + TIROS + ": Lista os tiros válidos realizados (* = tiro em navio, o = tiro na água)");
 		System.out.println("- " + DESISTIR + ": Encerra o jogo.");
+		System.out.println("- " + SCORES + ": Mostra a tabela de pontuações de todos os tempos.");
 		System.out.println("===============================================================");
+
 	}
 	/**
 	 * This operation allows the build up of a fleet, given user data
