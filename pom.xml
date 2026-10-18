@@ -134,11 +134,19 @@
 			<scope>compile</scope>
 		</dependency>
 
+
 		<!-- Apache Commons Lang: StopWatch para medir o tempo de cada jogada -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 			<version>3.21.0</version>
+		</dependency>
+
+		<!-- Biblioteca Lanterna para a User Story de Visualização Gráfica -->
+		<dependency>
+			<groupId>com.googlecode.lanterna</groupId>
+			<artifactId>lanterna</artifactId>
+			<version>3.1.1</version>
 		</dependency>
 
 	</dependencies>
