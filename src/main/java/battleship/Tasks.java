@@ -6,6 +6,9 @@ import java.util.Scanner;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+import org.apache.commons.lang3.time.DurationFormatUtils;
+import org.apache.commons.lang3.time.StopWatch;
+
 
 /**
  * The type Tasks.
@@ -43,10 +46,14 @@ public class Tasks {
 
 		IFleet myFleet = null;
 		IGame game = null;
+		StopWatch gameClock = null;   // NOVO: relógio do jogo inteiro
+		StopWatch moveClock;          // NOVO: relógio de cada jogada
+		int moveNumber = 0;           // NOVO: número da jogada atual
 		menuHelp();
 
 		System.out.print("> ");
 		Scanner in = new Scanner(System.in);
+		moveClock = StopWatch.createStarted();   // NOVO: começa a contar a jogada
 		String command = in.next();
 		while (!command.equals(DESISTIR)) {
 
@@ -55,11 +62,15 @@ public class Tasks {
 					myFleet = Fleet.createRandom();
 					game = new Game(myFleet);
 					game.printMyBoard(false, true);
+					gameClock = StopWatch.createStarted();   // NOVO: começa o relógio do jogo
+					moveNumber = 0;                          // NOVO
 					break;
 				case LEFROTA:
 					myFleet = buildFleet(in);
 					game = new Game(myFleet);
 					game.printMyBoard(false, true);
+					gameClock = StopWatch.createStarted();   // NOVO
+					moveNumber = 0;                          // NOVO
 					break;
 				case STATUS:
 					if (myFleet != null)
@@ -75,11 +86,18 @@ public class Tasks {
 				case RAJADA:
 					if (game != null) {
 						game.readEnemyFire(in);
+						moveClock.stop();                    // NOVO: para o relógio da jogada
+						moveNumber++;                        // NOVO
+						System.out.println("Tempo da jogada " + moveNumber + ": "
+								+ formatTime(moveClock.getTime()));   // NOVO
 						myFleet.printStatus();
 						game.printMyBoard(true, false);
 
 						if (game.getRemainingShips() == 0) {
+
 							exportarPDF(game);
+							printTotalTime(gameClock, moveNumber);   // NOVO
+
 							game.over();
 							System.exit(0);
 						}
@@ -89,6 +107,7 @@ public class Tasks {
 					if (game != null) {
 						while (game.getRemainingShips() > 0){
 							game.randomEnemyFire();
+							moveNumber++;                    // NOVO
 							myFleet.printStatus();
 							game.printMyBoard(true, false);
 							try {
@@ -99,7 +118,11 @@ public class Tasks {
 						}
 
 						if (game.getRemainingShips() == 0) {
+
 							exportarPDF(game);
+
+							printTotalTime(gameClock, moveNumber);   // NOVO
+
 							game.over();
 							System.exit(0);
 						}
@@ -109,6 +132,7 @@ public class Tasks {
 					if (game != null)
 						game.printMyBoard(true, true);
 					break;
+
 				case PDF:
 					if (game != null)
 						exportarPDF(game);
@@ -116,15 +140,44 @@ public class Tasks {
                 case AJUDA:
                     menuHelp();
                     break;
+
+				case AJUDA:
+					menuHelp();
+					break;
+
 				default:
 					System.out.println("Que comando é esse??? Repete ...");
 			}
 			System.out.print("> ");
+			moveClock = StopWatch.createStarted();   // NOVO: recomeça para a próxima jogada
 			command = in.next();
 		}
+		printTotalTime(gameClock, moveNumber);   // NOVO: mostra o total se o jogador desistir
 		System.out.println(GOODBYE_MESSAGE);
 	}
+	/**
+	 * Formata um tempo em milissegundos no formato mm:ss.SSS
+	 *
+	 * @param millis tempo em milissegundos
+	 * @return o tempo formatado
+	 */
+	private static String formatTime(long millis) {
+		return DurationFormatUtils.formatDuration(millis, "mm:ss.SSS");
+	}
 
+	/**
+	 * Para o relógio do jogo e mostra o tempo total e o número de rajadas
+	 *
+	 * @param gameClock o relógio do jogo
+	 * @param moves     o número de rajadas feitas
+	 */
+	private static void printTotalTime(StopWatch gameClock, int moves) {
+		if (gameClock == null)
+			return;
+		gameClock.stop();
+		System.out.println("Tempo total do jogo: " + formatTime(gameClock.getTime())
+				+ " (" + moves + " rajadas)");
+	}
 	/**
 	 * This function provides help information about the menu commands.
 	 */
