@@ -14,6 +14,7 @@ import org.apache.commons.lang3.time.StopWatch;
  * The type Tasks.
  */
 public class Tasks {
+
 	/**
 	 * The constant LOGGER.
 	 */
@@ -38,6 +39,7 @@ public class Tasks {
 	private static final String FICHEIRO_PDF = "jogadas.pdf";
 	private static final String STATUS = "estado";
 	private static final String SIMULA = "simula";
+	private static final String SCORES = "scores";
 
 	/**
 	 * This task also tests the fighting element of a round of three shots
@@ -46,9 +48,13 @@ public class Tasks {
 
 		IFleet myFleet = null;
 		IGame game = null;
+
+		ScoreboardManager manager = new ScoreboardManager();
+
 		StopWatch gameClock = null;   // NOVO: relógio do jogo inteiro
 		StopWatch moveClock;          // NOVO: relógio de cada jogada
 		int moveNumber = 0;           // NOVO: número da jogada atual
+
 		menuHelp();
 
 		System.out.print("> ");
@@ -99,6 +105,7 @@ public class Tasks {
 							printTotalTime(gameClock, moveNumber);   // NOVO
 
 							game.over();
+							manager.registerWin("Java Sparrow");
 							System.exit(0);
 						}
 					}
@@ -113,7 +120,7 @@ public class Tasks {
 							try {
 								Thread.sleep(3000);
 							} catch (InterruptedException e) {
-								Thread.currentThread().interrupt(); // Best practice: restore interrupt status
+								Thread.currentThread().interrupt();
 							}
 						}
 
@@ -124,9 +131,17 @@ public class Tasks {
 							printTotalTime(gameClock, moveNumber);   // NOVO
 
 							game.over();
+							manager.registerWin("Java Sparrow");
 							System.exit(0);
 						}
 					}
+					break;
+				case SCORES:
+					System.out.println("=== TABELA CLASSIFICATÓRIA ===");
+					for (PlayerScore ps : manager.getSortedScores()) {
+						System.out.println(ps.toString());
+					}
+					System.out.println("=============================");
 					break;
 				case TIROS:
 					if (game != null)
@@ -189,7 +204,9 @@ public class Tasks {
 		System.out.println("- " + TIROS + ": Lista os tiros válidos realizados (* = tiro em navio, o = tiro na água)");
 		System.out.println("- " + PDF + ": Exporta o histórico das jogadas para PDF.");
 		System.out.println("- " + DESISTIR + ": Encerra o jogo.");
+		System.out.println("- " + SCORES + ": Mostra a tabela de pontuações de todos os tempos.");
 		System.out.println("===============================================================");
+
 	}
 	// exporta o histórico das jogadas para PDF (#5)
 	private static void exportarPDF(IGame game) {
