@@ -1,10 +1,14 @@
 package battleship;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+import org.apache.commons.lang3.time.DurationFormatUtils;
+import org.apache.commons.lang3.time.StopWatch;
+
 
 /**
  * The type Tasks.
@@ -31,6 +35,8 @@ public class Tasks {
 	private static final String RAJADA = "rajada";
 	private static final String TIROS = "tiros";
 	private static final String MAPA = "mapa";
+	private static final String PDF = "pdf";
+	private static final String FICHEIRO_PDF = "jogadas.pdf";
 	private static final String STATUS = "estado";
 	private static final String SIMULA = "simula";
 	private static final String SCORES = "scores";
@@ -42,11 +48,18 @@ public class Tasks {
 
 		IFleet myFleet = null;
 		IGame game = null;
+
 		ScoreboardManager manager = new ScoreboardManager();
+
+		StopWatch gameClock = null;   // NOVO: relógio do jogo inteiro
+		StopWatch moveClock;          // NOVO: relógio de cada jogada
+		int moveNumber = 0;           // NOVO: número da jogada atual
+
 		menuHelp();
 
 		System.out.print("> ");
 		Scanner in = new Scanner(System.in);
+		moveClock = StopWatch.createStarted();   // NOVO: começa a contar a jogada
 		String command = in.next();
 		while (!command.equals(DESISTIR)) {
 
@@ -55,27 +68,42 @@ public class Tasks {
 					myFleet = Fleet.createRandom();
 					game = new Game(myFleet);
 					game.printMyBoard(false, true);
+					gameClock = StopWatch.createStarted();   // NOVO: começa o relógio do jogo
+					moveNumber = 0;                          // NOVO
 					break;
 				case LEFROTA:
 					myFleet = buildFleet(in);
 					game = new Game(myFleet);
 					game.printMyBoard(false, true);
+					gameClock = StopWatch.createStarted();   // NOVO
+					moveNumber = 0;                          // NOVO
 					break;
 				case STATUS:
 					if (myFleet != null)
 						myFleet.printStatus();
 					break;
 				case MAPA:
-					if (myFleet != null)
+					if (myFleet != null){
 						game.printMyBoard(false, true);
+						VisualizadorGrafico visualizador = new VisualizadorGrafico();
+						visualizador.mostrarTabuleiro(game);
+					}
 					break;
 				case RAJADA:
 					if (game != null) {
 						game.readEnemyFire(in);
+						moveClock.stop();                    // NOVO: para o relógio da jogada
+						moveNumber++;                        // NOVO
+						System.out.println("Tempo da jogada " + moveNumber + ": "
+								+ formatTime(moveClock.getTime()));   // NOVO
 						myFleet.printStatus();
 						game.printMyBoard(true, false);
 
 						if (game.getRemainingShips() == 0) {
+
+							exportarPDF(game);
+							printTotalTime(gameClock, moveNumber);   // NOVO
+
 							game.over();
 							manager.registerWin("Java Sparrow");
 							System.exit(0);
@@ -86,6 +114,7 @@ public class Tasks {
 					if (game != null) {
 						while (game.getRemainingShips() > 0){
 							game.randomEnemyFire();
+							moveNumber++;                    // NOVO
 							myFleet.printStatus();
 							game.printMyBoard(true, false);
 							try {
@@ -96,6 +125,11 @@ public class Tasks {
 						}
 
 						if (game.getRemainingShips() == 0) {
+
+							exportarPDF(game);
+
+							printTotalTime(gameClock, moveNumber);   // NOVO
+
 							game.over();
 							manager.registerWin("Java Sparrow");
 							System.exit(0);
@@ -113,18 +147,48 @@ public class Tasks {
 					if (game != null)
 						game.printMyBoard(true, true);
 					break;
+
+				case PDF:
+					if (game != null)
+						exportarPDF(game);
+					break;
                 case AJUDA:
                     menuHelp();
                     break;
+
 				default:
 					System.out.println("Que comando é esse??? Repete ...");
 			}
 			System.out.print("> ");
+			moveClock = StopWatch.createStarted();   // NOVO: recomeça para a próxima jogada
 			command = in.next();
 		}
+		printTotalTime(gameClock, moveNumber);   // NOVO: mostra o total se o jogador desistir
 		System.out.println(GOODBYE_MESSAGE);
 	}
+	/**
+	 * Formata um tempo em milissegundos no formato mm:ss.SSS
+	 *
+	 * @param millis tempo em milissegundos
+	 * @return o tempo formatado
+	 */
+	private static String formatTime(long millis) {
+		return DurationFormatUtils.formatDuration(millis, "mm:ss.SSS");
+	}
 
+	/**
+	 * Para o relógio do jogo e mostra o tempo total e o número de rajadas
+	 *
+	 * @param gameClock o relógio do jogo
+	 * @param moves     o número de rajadas feitas
+	 */
+	private static void printTotalTime(StopWatch gameClock, int moves) {
+		if (gameClock == null)
+			return;
+		gameClock.stop();
+		System.out.println("Tempo total do jogo: " + formatTime(gameClock.getTime())
+				+ " (" + moves + " rajadas)");
+	}
 	/**
 	 * This function provides help information about the menu commands.
 	 */
@@ -138,11 +202,22 @@ public class Tasks {
 		System.out.println("- " + RAJADA + ": Realiza uma rajada de disparos.");
 		System.out.println("- " + SIMULA + ": Simula um jogo completo.");
 		System.out.println("- " + TIROS + ": Lista os tiros válidos realizados (* = tiro em navio, o = tiro na água)");
+		System.out.println("- " + PDF + ": Exporta o histórico das jogadas para PDF.");
 		System.out.println("- " + DESISTIR + ": Encerra o jogo.");
 		System.out.println("- " + SCORES + ": Mostra a tabela de pontuações de todos os tempos.");
 		System.out.println("===============================================================");
 
 	}
+	// exporta o histórico das jogadas para PDF (#5)
+	private static void exportarPDF(IGame game) {
+		try {
+			ExportadorPDF.exportar(game, FICHEIRO_PDF);
+			System.out.println("Jogadas exportadas para " + FICHEIRO_PDF);
+		} catch (IOException e) {
+			System.out.println("Não foi possível criar o PDF: " + e.getMessage());
+		}
+	}
+
 	/**
 	 * This operation allows the build up of a fleet, given user data
 	 *
