@@ -141,10 +141,6 @@ public class Tasks {
                     menuHelp();
                     break;
 
-				case AJUDA:
-					menuHelp();
-					break;
-
 				default:
 					System.out.println("Que comando é esse??? Repete ...");
 			}
