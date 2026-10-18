@@ -1,5 +1,6 @@
 package battleship;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 import org.apache.logging.log4j.LogManager;
@@ -30,6 +31,8 @@ public class Tasks {
 	private static final String RAJADA = "rajada";
 	private static final String TIROS = "tiros";
 	private static final String MAPA = "mapa";
+	private static final String PDF = "pdf";
+	private static final String FICHEIRO_PDF = "jogadas.pdf";
 	private static final String STATUS = "estado";
 	private static final String SIMULA = "simula";
 
@@ -76,6 +79,7 @@ public class Tasks {
 						game.printMyBoard(true, false);
 
 						if (game.getRemainingShips() == 0) {
+							exportarPDF(game);
 							game.over();
 							System.exit(0);
 						}
@@ -95,6 +99,7 @@ public class Tasks {
 						}
 
 						if (game.getRemainingShips() == 0) {
+							exportarPDF(game);
 							game.over();
 							System.exit(0);
 						}
@@ -103,6 +108,10 @@ public class Tasks {
 				case TIROS:
 					if (game != null)
 						game.printMyBoard(true, true);
+					break;
+				case PDF:
+					if (game != null)
+						exportarPDF(game);
 					break;
                 case AJUDA:
                     menuHelp();
@@ -129,9 +138,20 @@ public class Tasks {
 		System.out.println("- " + RAJADA + ": Realiza uma rajada de disparos.");
 		System.out.println("- " + SIMULA + ": Simula um jogo completo.");
 		System.out.println("- " + TIROS + ": Lista os tiros válidos realizados (* = tiro em navio, o = tiro na água)");
+		System.out.println("- " + PDF + ": Exporta o histórico das jogadas para PDF.");
 		System.out.println("- " + DESISTIR + ": Encerra o jogo.");
 		System.out.println("===============================================================");
 	}
+	// exporta o histórico das jogadas para PDF (#5)
+	private static void exportarPDF(IGame game) {
+		try {
+			ExportadorPDF.exportar(game, FICHEIRO_PDF);
+			System.out.println("Jogadas exportadas para " + FICHEIRO_PDF);
+		} catch (IOException e) {
+			System.out.println("Não foi possível criar o PDF: " + e.getMessage());
+		}
+	}
+
 	/**
 	 * This operation allows the build up of a fleet, given user data
 	 *
