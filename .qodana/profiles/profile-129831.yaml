@@ -1,9 +1,9 @@
 # 129831 Tomás Frias Rei
-version: "1.0"
-linter: jetbrains/qodana-jvm-community:2024.2
-projectJDK: "17"
 profile:
-  path: .qodana/profiles/profile-129831.yaml
-failureConditions:
-  severityThresholds:
-    any: 0
+  base:
+    name: empty
+  inspections:
+    - inspection: ClassWithTooManyMethods
+      enabled: true
+      options:
+        m_limit: 1000
