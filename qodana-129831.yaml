@@ -1,6 +1,6 @@
 # 129831 Tomás Frias Rei
 version: "1.0"
-linter: jetbrains/qodana-jvm-community:2024.2
+linter: jetbrains/qodana-jvm-community:2025.1
 projectJDK: "17"
 profile:
   path: .qodana/profiles/profile-129831.yaml
