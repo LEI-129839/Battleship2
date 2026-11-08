@@ -1,0 +1,12 @@
+# 129824 - Rodrigo
+name: "Long Parameter List - 129824"
+baseProfile: empty
+inspections:
+  - inspection: ParametersPerMethod
+    enabled: true
+    options:
+      m_limit: 3
+  - inspection: ParametersPerConstructor
+    enabled: true
+    options:
+      m_limit: 3
