@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 import java.util.*;
 
-public class game implements IGame
+public class Game implements IGame
 {
 	/**
 	 * Prints the game board by representing the positions of ships, adjacent tiles,
