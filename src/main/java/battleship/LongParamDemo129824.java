@@ -4,6 +4,7 @@ package battleship;
 /**
  * Classe de demonstração para provocar o cheiro Long Parameter List
  * (Ficha 3 - Tarefa 2A, passo 9).
+  * Versão com o cheiro (deve falhar o gate).
  */
 public class LongParamDemo129824 {
 
