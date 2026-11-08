@@ -1,0 +1,18 @@
+# 129831 Tomás Frias Rei
+name: Checkstyle TypeName 129831
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+jobs:
+  checkstyle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      - name: Run Checkstyle 129831
+        run: mvn checkstyle:check -Dcheckstyle.config.location=checkstyle-129831.xml
