@@ -11,6 +11,7 @@ import com.googlecode.lanterna.input.KeyType;
 
 public class VisualizadorGrafico {
 
+
     // Variável estática para impedir que o ecrã abra 2 vezes se escreveres "mapa" repetidamente
     private static boolean isRunning = false;
 
@@ -19,6 +20,8 @@ public class VisualizadorGrafico {
             System.out.println("O radar já está ativo numa janela separada!");
             return;
         }
+
+
 
         // Criar uma THREAD: Isto corre em paralelo para não bloquear a consola principal!
         new Thread(() -> {
@@ -144,5 +147,8 @@ public class VisualizadorGrafico {
                 isRunning = false;
             }
         }).start(); // Dá o "tiro de partida" na Thread paralela
+
+
+
     }
 }
