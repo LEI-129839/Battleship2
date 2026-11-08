@@ -2,18 +2,29 @@
 package battleship;
 
 /**
- * Classe de demonstração para provocar o cheiro Long Parameter List
+ * Classe de demonstração para o cheiro Long Parameter List
  * (Ficha 3 - Tarefa 2A, passo 9).
-  * Versão com o cheiro (deve falhar o gate).
+ * Versão corrigida: refabricação "Introduce Parameter Object" (Fowler).
  */
 public class LongParamDemo129824 {
 
     /**
-     * Método com demasiados parâmetros (6): deve ser detetado pelo quality gate.
+     * Objeto que agrupa os dados de uma jogada (substitui os 6 parâmetros).
      */
-    public static String descreverJogada(String jogador, int linha, int coluna,
-                                         boolean acertou, boolean afundou, long tempoMs) {
-        return jogador + " -> (" + linha + "," + coluna + ") acertou=" + acertou
-                + " afundou=" + afundou + " tempo=" + tempoMs + "ms";
+    public static class Jogada {
+        public String jogador;
+        public int linha;
+        public int coluna;
+        public boolean acertou;
+        public boolean afundou;
+        public long tempoMs;
+    }
+
+    /**
+     * Agora recebe apenas 1 parâmetro.
+     */
+    public static String descreverJogada(Jogada j) {
+        return j.jogador + " -> (" + j.linha + "," + j.coluna + ") acertou=" + j.acertou
+                + " afundou=" + j.afundou + " tempo=" + j.tempoMs + "ms";
     }
 }
