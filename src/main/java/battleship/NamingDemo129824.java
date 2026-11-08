@@ -7,10 +7,10 @@ package battleship;
  */
 public class NamingDemo129824 {
 
-    /** Atributo com nome fora da convenção (devia ser camelCase). */
-    private int Numero_De_Navios = 5;
+        /** Atributo com nome conforme a convenção (camelCase). */
+    private int numeroDeNavios = 5;
 
     public int getNumeroDeNavios() {
-        return Numero_De_Navios;
+        return numeroDeNavios;
     }
 }
