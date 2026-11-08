@@ -15,14 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
-      - uses: JetBrains/qodana-action@v2026.2
-        with:
-          args: --config qodana-129824.yaml
-          pr-mode: false
-          use-annotations: true
-          post-pr-comment: true
       - uses: JetBrains/qodana-action@v2026.2
         with:
           args: --config qodana-129824.yaml
