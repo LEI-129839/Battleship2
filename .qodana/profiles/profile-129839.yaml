@@ -1,0 +1,10 @@
+# 129839 - Afonso Ribeiro
+# Cheiro: Shotgun Surgery (aproximação da estratégia de deteção do livro Lanza & Marinescu)
+name: "Shotgun Surgery - 129839"
+baseProfile: empty
+inspections:
+  - inspection: ClassWithTooManyDependents   # "Class with too many dependents" ~ ChC (Changing Classes)
+    enabled: true
+    severity: WARNING
+    options:
+      limit: 7                               # SHORT_MEMORY_CAP = 7 (default do IDE: 10)
