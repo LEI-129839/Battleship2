@@ -11,7 +11,7 @@ import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 
 public class ExportadorPDF {
-    private static final float MARGEM = 50;
+    private static final float margemPagina = 50;
     private static final float ALTURA_LINHA = 14;
 
     private static final PDFont NEGRITO = new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD);
@@ -33,16 +33,16 @@ public class ExportadorPDF {
         PDPage pagina = new PDPage(PDRectangle.A4);
         documento.addPage(pagina);
         conteudo = new PDPageContentStream(documento, pagina);
-        y = pagina.getMediaBox().getHeight() - MARGEM;
+        y = pagina.getMediaBox().getHeight() - margemPagina;
 
     }
 
     private void escreverLinha(String texto, PDFont fonte, float tamanho) throws IOException {
-        if (y < MARGEM)
+        if (y < margemPagina)
             novaPagina();
         conteudo.beginText();
         conteudo.setFont(fonte, tamanho);
-        conteudo.newLineAtOffset(MARGEM, y);
+        conteudo.newLineAtOffset(margemPagina, y);
         conteudo.showText(texto);
         conteudo.endText();
         y -= ALTURA_LINHA;
