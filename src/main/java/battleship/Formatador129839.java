@@ -10,9 +10,7 @@ public class Formatador129839 {
         return etiqueta + ": " + valor;
     }
 
-    public static String relatorio(Object rajada, Object tiro, Object navio, Object frota) {
-        return String.join(System.lineSeparator(),
-                formatar("Rajada", rajada), formatar("Tiro", tiro),
-                formatar("Navio", navio), formatar("Frota", frota));
+    public static String relatorio(Object rajada, Object tiro) {
+        return formatar("Rajada", rajada) + System.lineSeparator() + formatar("Tiro", tiro);
     }
 }
