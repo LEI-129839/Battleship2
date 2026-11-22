@@ -1,0 +1,249 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ExportadorPDF</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">battleship</a>
+</div>
+
+<h1>Coverage Summary for Class: ExportadorPDF (battleship)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ExportadorPDF</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (7/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (40/40)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (71/71)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package battleship;
+&nbsp;
+&nbsp;import java.io.IOException;
+&nbsp;
+&nbsp;import org.apache.pdfbox.pdmodel.PDDocument;
+&nbsp;import org.apache.pdfbox.pdmodel.PDPage;
+&nbsp;import org.apache.pdfbox.pdmodel.PDPageContentStream;
+&nbsp;import org.apache.pdfbox.pdmodel.common.PDRectangle;
+&nbsp;import org.apache.pdfbox.pdmodel.font.PDFont;
+&nbsp;import org.apache.pdfbox.pdmodel.font.PDType1Font;
+&nbsp;import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
+&nbsp;
+&nbsp;public class ExportadorPDF {
+&nbsp;    private static final float MARGEM = 50;
+&nbsp;    private static final float ALTURA_LINHA = 14;
+&nbsp;
+<b class="fc">&nbsp;    private static final PDFont NEGRITO = new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD);</b>
+<b class="fc">&nbsp;    private static final PDFont MONO = new PDType1Font(Standard14Fonts.FontName.COURIER);</b>
+&nbsp;
+&nbsp;    private final PDDocument documento;
+&nbsp;    private PDPageContentStream conteudo;
+&nbsp;    private float y;
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;    private ExportadorPDF(PDDocument documento) {</b>
+<b class="fc">&nbsp;        this.documento = documento;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // cria uma página A4 nova e coloca a margem de topo
+&nbsp;    private void novaPagina() throws IOException {
+<b class="fc">&nbsp;        if (conteudo != null)</b>
+<b class="fc">&nbsp;            conteudo.close();</b>
+<b class="fc">&nbsp;        PDPage pagina = new PDPage(PDRectangle.A4);</b>
+<b class="fc">&nbsp;        documento.addPage(pagina);</b>
+<b class="fc">&nbsp;        conteudo = new PDPageContentStream(documento, pagina);</b>
+<b class="fc">&nbsp;        y = pagina.getMediaBox().getHeight() - MARGEM;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    private void escreverLinha(String texto, PDFont fonte, float tamanho) throws IOException {
+<b class="fc">&nbsp;        if (y &lt; MARGEM)</b>
+<b class="fc">&nbsp;            novaPagina();</b>
+<b class="fc">&nbsp;        conteudo.beginText();</b>
+<b class="fc">&nbsp;        conteudo.setFont(fonte, tamanho);</b>
+<b class="fc">&nbsp;        conteudo.newLineAtOffset(MARGEM, y);</b>
+<b class="fc">&nbsp;        conteudo.showText(texto);</b>
+<b class="fc">&nbsp;        conteudo.endText();</b>
+<b class="fc">&nbsp;        y -= ALTURA_LINHA;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    // converte o resultado de um tiro para texto
+&nbsp;    private static String descreverTiro(IGame.ShotResult resultado) {
+<b class="fc">&nbsp;        if (!resultado.valid())</b>
+<b class="fc">&nbsp;            return &quot;fora do tabuleiro&quot;;</b>
+<b class="fc">&nbsp;        if (resultado.repeated())</b>
+<b class="fc">&nbsp;            return &quot;repetido&quot;;</b>
+<b class="fc">&nbsp;        if (resultado.ship() == null)</b>
+<b class="fc">&nbsp;            return &quot;água&quot;;</b>
+<b class="fc">&nbsp;        if (resultado.sunk())</b>
+<b class="fc">&nbsp;            return resultado.ship().getCategory() + &quot; ao fundo&quot;;</b>
+<b class="fc">&nbsp;        return &quot;tiro em &quot; + resultado.ship().getCategory();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static void exportar(IGame game, String ficheiro) throws IOException {
+<b class="fc">&nbsp;        try (PDDocument documento = new PDDocument()) {</b>
+<b class="fc">&nbsp;            ExportadorPDF pdf = new ExportadorPDF(documento);</b>
+<b class="fc">&nbsp;            pdf.novaPagina();</b>
+&nbsp;
+<b class="fc">&nbsp;            pdf.escreverLinha(&quot;Batalha Naval - Histórico das jogadas&quot;, NEGRITO, 16);</b>
+<b class="fc">&nbsp;            pdf.y -= ALTURA_LINHA;</b>
+&nbsp;
+<b class="fc">&nbsp;            for (IMove jogada : game.getAlienMoves()) {</b>
+<b class="fc">&nbsp;                String linha = &quot;Rajada &quot; + jogada.getNumber() + &quot;:&quot;;</b>
+<b class="fc">&nbsp;                for (int i = 0; i &lt; jogada.getShots().size(); i++) {</b>
+<b class="fc">&nbsp;                    IPosition tiro = jogada.getShots().get(i);</b>
+<b class="fc">&nbsp;                    IGame.ShotResult resultado = jogada.getShotResults().get(i);</b>
+<b class="fc">&nbsp;                    linha += &quot;  &quot; + tiro + &quot; (&quot; + descreverTiro(resultado) + &quot;)&quot;;</b>
+&nbsp;                }
+<b class="fc">&nbsp;                pdf.escreverLinha(linha, MONO, 10);</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            pdf.y -= ALTURA_LINHA;</b>
+<b class="fc">&nbsp;            pdf.escreverTabuleiro(game);</b>
+&nbsp;
+<b class="fc">&nbsp;            pdf.conteudo.close();</b>
+<b class="fc">&nbsp;            documento.save(ficheiro);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    // desenha o tabuleiro final com os navios e os tiros
+&nbsp;    private void escreverTabuleiro(IGame game) throws IOException {
+<b class="fc">&nbsp;        char[][] mapa = new char[Game.BOARD_SIZE][Game.BOARD_SIZE];</b>
+<b class="fc">&nbsp;        for (int r = 0; r &lt; Game.BOARD_SIZE; r++)</b>
+<b class="fc">&nbsp;            for (int c = 0; c &lt; Game.BOARD_SIZE; c++)</b>
+<b class="fc">&nbsp;                mapa[r][c] = &#39;.&#39;;</b>
+&nbsp;
+<b class="fc">&nbsp;        for (IShip navio : game.getMyFleet().getShips())</b>
+<b class="fc">&nbsp;            for (IPosition pos : navio.getPositions())</b>
+<b class="fc">&nbsp;                mapa[pos.getRow()][pos.getColumn()] = &#39;#&#39;;</b>
+&nbsp;
+<b class="fc">&nbsp;        for (IMove jogada : game.getAlienMoves())</b>
+<b class="fc">&nbsp;            for (IPosition tiro : jogada.getShots())</b>
+<b class="fc">&nbsp;                if (tiro.isInside()) {</b>
+<b class="fc">&nbsp;                    int r = tiro.getRow();</b>
+<b class="fc">&nbsp;                    int c = tiro.getColumn();</b>
+<b class="fc">&nbsp;                    if (mapa[r][c] == &#39;#&#39;)</b>
+<b class="fc">&nbsp;                        mapa[r][c] = &#39;*&#39;;</b>
+<b class="fc">&nbsp;                    else if (mapa[r][c] == &#39;.&#39;)</b>
+<b class="fc">&nbsp;                        mapa[r][c] = &#39;o&#39;;</b>
+&nbsp;                }
+&nbsp;
+<b class="fc">&nbsp;        escreverLinha(&quot;Tabuleiro final&quot;, NEGRITO, 12);</b>
+<b class="fc">&nbsp;        String cabecalho = &quot;  &quot;;</b>
+<b class="fc">&nbsp;        for (int c = 0; c &lt; Game.BOARD_SIZE; c++)</b>
+<b class="fc">&nbsp;            cabecalho += String.format(&quot;%3d&quot;, c + 1);</b>
+<b class="fc">&nbsp;        escreverLinha(cabecalho, MONO, 10);</b>
+&nbsp;
+<b class="fc">&nbsp;        for (int r = 0; r &lt; Game.BOARD_SIZE; r++) {</b>
+<b class="fc">&nbsp;            String linha = (char) (&#39;A&#39; + r) + &quot; &quot;;</b>
+<b class="fc">&nbsp;            for (int c = 0; c &lt; Game.BOARD_SIZE; c++)</b>
+<b class="fc">&nbsp;                linha += &quot;  &quot; + mapa[r][c];</b>
+<b class="fc">&nbsp;            escreverLinha(linha, MONO, 10);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        y -= ALTURA_LINHA;</b>
+<b class="fc">&nbsp;        escreverLinha(&quot;# navio   * tiro certeiro   o tiro na água&quot;, MONO, 10);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-11-22 19:14</div>
+</div>
+</body>
+</html>

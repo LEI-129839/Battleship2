@@ -1,0 +1,223 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ScoreboardManager</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">battleship</a>
+</div>
+
+<h1>Coverage Summary for Class: ScoreboardManager (battleship)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ScoreboardManager</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (5/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (8/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (21/21)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">ScoreboardManager$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (8/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (22/22)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package battleship;
+&nbsp;
+&nbsp;import com.fasterxml.jackson.core.type.TypeReference;
+&nbsp;import com.fasterxml.jackson.databind.ObjectMapper;
+&nbsp;
+&nbsp;import java.io.File;
+&nbsp;import java.io.IOException;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;public class ScoreboardManager {
+&nbsp;    private static final String SCORE_FILE = &quot;data/scoreboard.json&quot;;
+&nbsp;    private ObjectMapper mapper;
+&nbsp;    private List&lt;PlayerScore&gt; scores;
+&nbsp;
+<b class="fc">&nbsp;    public ScoreboardManager() {</b>
+<b class="fc">&nbsp;        mapper = new ObjectMapper();</b>
+<b class="fc">&nbsp;        scores = loadScores();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Lê as pontuações do ficheiro JSON
+&nbsp;    private List&lt;PlayerScore&gt; loadScores() {
+<b class="fc">&nbsp;        File file = new File(SCORE_FILE);</b>
+&nbsp;        // Se o ficheiro já existir, lê e converte para a lista de PlayerScore
+<b class="fc">&nbsp;        if (file.exists()) {</b>
+&nbsp;            try {
+<b class="fc">&nbsp;                return mapper.readValue(file, new TypeReference&lt;List&lt;PlayerScore&gt;&gt;() {});</b>
+&nbsp;            } catch (IOException e) {
+<b class="fc">&nbsp;                System.out.println(&quot;Erro ao ler o ficheiro de pontuações: &quot; + e.getMessage());</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;        // Se for a primeira vez que o jogo corre, devolve uma lista vazia
+<b class="fc">&nbsp;        return new ArrayList&lt;&gt;();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Guarda as pontuações da memória para o ficheiro JSON
+&nbsp;    private void saveScores() {
+&nbsp;        try {
+<b class="fc">&nbsp;            mapper.writeValue(new File(SCORE_FILE), scores);</b>
+&nbsp;        } catch (IOException e) {
+<b class="fc">&nbsp;            System.out.println(&quot;Erro ao guardar as pontuações: &quot; + e.getMessage());</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    // Método que deves chamar sempre que um jogador ganhar o jogo
+&nbsp;    public void registerWin(String playerName) {
+<b class="fc">&nbsp;        PlayerScore player = null;</b>
+&nbsp;
+&nbsp;        // Procura se o jogador já existe na lista
+<b class="fc">&nbsp;        for (PlayerScore p : scores) {</b>
+<b class="fc">&nbsp;            if (p.getPlayerName().equals(playerName)) {</b>
+<b class="fc">&nbsp;                player = p;</b>
+&nbsp;                break;
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;        // Se o jogador não existir, cria-o com 0 vitórias iniciais
+<b class="fc">&nbsp;        if (player == null) {</b>
+<b class="fc">&nbsp;            player = new PlayerScore(playerName, 0);</b>
+<b class="fc">&nbsp;            scores.add(player);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // Adiciona a vitória e guarda o ficheiro atualizado
+<b class="fc">&nbsp;        player.addWin();</b>
+<b class="fc">&nbsp;        saveScores();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Devolve a lista de pontuações ordenada por número de vitórias (do maior para o menor)
+&nbsp;    public List&lt;PlayerScore&gt; getSortedScores() {
+<b class="fc">&nbsp;        scores.sort((p1, p2) -&gt; Integer.compare(p2.getWins(), p1.getWins()));</b>
+<b class="fc">&nbsp;        return scores;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-11-22 19:14</div>
+</div>
+</body>
+</html>
