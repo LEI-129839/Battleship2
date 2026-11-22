@@ -172,8 +172,8 @@ public class FleetTest {
 		fleet.addShip(ship1);
 		fleet.addShip(ship2);
 
-		assertDoesNotThrow(() -> fleet.printShips(Collections.emptyList()));
-		assertDoesNotThrow(() -> fleet.printShips(fleet.getShips()));
+		assertDoesNotThrow(() -> Fleet.printShips(Collections.emptyList()));
+		assertDoesNotThrow(() -> Fleet.printShips(fleet.getShips()));
 		assertDoesNotThrow(() -> fleet.printShipsByCategory("Barca"));
 		assertDoesNotThrow(fleet::printFloatingShips);
 		assertDoesNotThrow(fleet::printAllShips);
@@ -185,7 +185,7 @@ public class FleetTest {
 		assertThrows(AssertionError.class, () -> fleet.addShip(null));
 		assertThrows(AssertionError.class, () -> fleet.getShipsLike(null));
 		assertThrows(AssertionError.class, () -> fleet.shipAt(null));
-		assertThrows(AssertionError.class, () -> fleet.printShips(null));
+		assertThrows(AssertionError.class, () -> Fleet.printShips(null));
 		assertThrows(AssertionError.class, () -> fleet.printShipsByCategory(null));
 	}
 }

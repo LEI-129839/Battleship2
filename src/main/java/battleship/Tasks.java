@@ -40,6 +40,7 @@ public class Tasks {
 	private static final String STATUS = "estado";
 	private static final String SIMULA = "simula";
 	private static final String SCORES = "scores";
+	public static final int SIMULATION_DELAY_MS = 3000;
 
 	/**
 	 * This task also tests the fighting element of a round of three shots
@@ -99,15 +100,7 @@ public class Tasks {
 						myFleet.printStatus();
 						game.printMyBoard(true, false);
 
-						if (game.getRemainingShips() == 0) {
-
-							exportarPDF(game);
-							printTotalTime(gameClock, moveNumber);   // NOVO
-
-							game.over();
-							manager.registerWin("Java Sparrow");
-							System.exit(0);
-						}
+						checkGameOver(game, gameClock, moveNumber, manager);
 					}
 					break;
 				case SIMULA:
@@ -118,22 +111,13 @@ public class Tasks {
 							myFleet.printStatus();
 							game.printMyBoard(true, false);
 							try {
-								Thread.sleep(3000);
+								Thread.sleep(SIMULATION_DELAY_MS);
 							} catch (InterruptedException e) {
 								Thread.currentThread().interrupt();
 							}
 						}
 
-						if (game.getRemainingShips() == 0) {
-
-							exportarPDF(game);
-
-							printTotalTime(gameClock, moveNumber);   // NOVO
-
-							game.over();
-							manager.registerWin("Java Sparrow");
-							System.exit(0);
-						}
+						checkGameOver(game, gameClock, moveNumber, manager);
 					}
 					break;
 				case SCORES:
@@ -166,6 +150,19 @@ public class Tasks {
 		printTotalTime(gameClock, moveNumber);   // NOVO: mostra o total se o jogador desistir
 		System.out.println(GOODBYE_MESSAGE);
 	}
+
+	private static void checkGameOver(IGame game, StopWatch gameClock, int moveNumber, ScoreboardManager manager) {
+		if (game.getRemainingShips() == 0) {
+
+			exportarPDF(game);
+			printTotalTime(gameClock, moveNumber);   // NOVO
+
+			game.over();
+			manager.registerWin("Java Sparrow");
+			System.exit(0);
+		}
+	}
+
 	/**
 	 * Formata um tempo em milissegundos no formato mm:ss.SSS
 	 *
@@ -259,8 +256,7 @@ public class Tasks {
 		String shipKind = in.next();
 		Position pos = readPosition(in);
 		char c = in.next().charAt(0);
-		Compass bearing = Compass.charToCompass(c);
-		return Ship.buildShip(shipKind, bearing, pos);
+        return Ship.buildShip(shipKind, Compass.charToCompass(c), pos);
 	}
 
 	/**
@@ -290,14 +286,14 @@ public class Tasks {
 			throw new IllegalArgumentException("Nenhuma posição válida encontrada!");
 		}
 
-		String part1 = in.next(); // Primeiro token
-		String part2 = null;
+		String firstToken = in.next(); // Primeiro token
+		String secondToken = null;
 
 		if (in.hasNextInt()) {
-			part2 = in.next(); // Segundo token, se disponível
+			secondToken = in.next(); // Segundo token, se disponível
 		}
 
-		String input = (part2 != null) ? part1 + part2 : part1;
+		String input = (secondToken != null) ? firstToken + secondToken : firstToken;
 
 		// Normalizar o input para tratar letras maiúsculas e minúsculas
 		input = input.toUpperCase();
@@ -307,9 +303,9 @@ public class Tasks {
 			char column = input.charAt(0); // Extrair a coluna
 			int row = Integer.parseInt(input.substring(1)); // Extrair a linha
 			return new Position(column, row);
-		} else if (part2 != null && part1.matches("[A-Z]") && part2.matches("\\d+")) {
-			char column = part1.charAt(0); // Extrair a coluna
-			int row = Integer.parseInt(part2); // Extrair a linha
+		} else if (secondToken != null && firstToken.matches("[A-Z]") && secondToken.matches("\\d+")) {
+			char column = firstToken.charAt(0); // Extrair a coluna
+			int row = Integer.parseInt(secondToken); // Extrair a linha
 			return new Position(column, row);
 		} else {
 			throw new IllegalArgumentException("Formato inválido. Use 'A3', 'A 3' ou similar.");

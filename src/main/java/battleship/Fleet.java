@@ -90,7 +90,8 @@ public class Fleet implements IFleet
 		assert s != null;
 
 		boolean result = false;
-		if ((ships.size() <= FLEET_SIZE) && (s.isInsideBoard()) && (!collisionRisk(s)))
+		boolean canAddShip = (ships.size() <= FLEET_SIZE) && (s.isInsideBoard()) && (!collisionRisk(s));
+		if (canAddShip)
 		{
 			ships.add(s);
 			result = true;
@@ -209,7 +210,7 @@ public class Fleet implements IFleet
 	 *
 	 * @param ships The list of ships
 	 */
-	public void printShips(List<IShip> ships)
+	public static void printShips(List<IShip> ships)
 	{
 		assert ships != null;
 
