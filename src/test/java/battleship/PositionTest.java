@@ -2,7 +2,7 @@ package battleship;
 
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
-
+import java.util.List;
 /**
  * Test class for Position.
  * Author: britoeabreu
@@ -61,8 +61,9 @@ public class PositionTest {
 	}
 
 	@Test
+	@DisplayName("getClassicColumn devolve a coluna a começar em 1")
 	void getClassicColumn() {
-		assertEquals(3, position.getColumn(), "Failed to get column: expected 3 but got " + position.getColumn());
+		assertEquals(4, position.getClassicColumn(), "Failed to get classic column: expected 4 but got " + position.getClassicColumn());
 	}
 
 	@Test
@@ -181,5 +182,57 @@ public class PositionTest {
 		assertEquals(expected, position.toString(),
 				"Incorrect string representation: expected '" + expected +
 						"' but got '" + position.toString() + "'");
+	}
+	@Test
+	@DisplayName("Construtor clássico converte 'C',4 para linha 2 e coluna 3")
+	void classicConstructor() {
+		Position pos = new Position('C', 4);
+		assertEquals(2, pos.getRow(), "Row should be 2 for 'C'");
+		assertEquals(3, pos.getColumn(), "Column should be 3 for classic column 4");
+		assertFalse(pos.isOccupied(), "New position should not be occupied");
+		assertFalse(pos.isHit(), "New position should not be hit");
+	}
+
+	@Test
+	@DisplayName("Construtor clássico aceita letra minúscula")
+	void classicConstructorLowerCase() {
+		Position pos = new Position('c', 4);
+		assertEquals(new Position(2, 3), pos, "Lowercase 'c' should be the same as 'C'");
+	}
+
+	@Test
+	@DisplayName("randomPosition gera sempre posições dentro do tabuleiro")
+	void randomPositionIsInside() {
+		for (int i = 0; i < 100; i++) {
+			Position pos = Position.randomPosition();
+			assertNotNull(pos, "Random position should not be null");
+			assertTrue(pos.isInside(), "Random position should be inside the board: " + pos);
+		}
+	}
+
+	@Test
+	@DisplayName("Posição no meio do tabuleiro tem 8 adjacentes")
+	void adjacentPositionsMiddle() {
+		List<IPosition> adj = position.adjacentPositions(); // (2,3)
+		assertEquals(8, adj.size(), "A middle position should have 8 adjacent positions");
+		assertTrue(adj.contains(new Position(1, 3)), "Should contain the position above");
+		assertTrue(adj.contains(new Position(3, 4)), "Should contain the diagonal position");
+		assertFalse(adj.contains(position), "Should not contain itself");
+	}
+
+	@Test
+	@DisplayName("Posição no canto do tabuleiro só tem 3 adjacentes")
+	void adjacentPositionsCorner() {
+		List<IPosition> adj = new Position(0, 0).adjacentPositions();
+		assertEquals(3, adj.size(), "A corner position should have only 3 adjacent positions");
+		assertTrue(adj.contains(new Position(0, 1)));
+		assertTrue(adj.contains(new Position(1, 0)));
+		assertTrue(adj.contains(new Position(1, 1)));
+	}
+	@Test
+	@DisplayName("Mesma linha mas coluna afastada não é adjacente")
+	void isAdjacentToSameRowFarColumn() {
+		Position other = new Position(2, 6);
+		assertFalse(position.isAdjacentTo(other), "Position in same row but 3 columns away should not be adjacent");
 	}
 }
