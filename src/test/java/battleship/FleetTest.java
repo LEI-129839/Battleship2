@@ -144,7 +144,7 @@ public class FleetTest {
 	@Test
 	@DisplayName("colisionRisk deve detetar navios sobrepostos e ignorar navios afastados")
 	void testColisionRisk() throws Exception {
-		var method = Fleet.class.getDeclaredMethod("colisionRisk", IShip.class);
+		var method = Fleet.class.getDeclaredMethod("collisionRisk", IShip.class);
 		method.setAccessible(true);
 
 		IShip ship1 = new Barge(Compass.NORTH, new Position(1, 1));
