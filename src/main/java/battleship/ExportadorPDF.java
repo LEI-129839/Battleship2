@@ -16,6 +16,10 @@ public class ExportadorPDF {
 
     private static final PDFont NEGRITO = new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD);
     private static final PDFont MONO = new PDType1Font(Standard14Fonts.FontName.COURIER);
+    private static final char VAZIO = '.';
+    private static final char NAVIO = '#';
+    private static final char ACERTO = '*';
+    private static final char AGUA = 'o';
 
     private final PDDocument documento;
     private PDPageContentStream conteudo;
@@ -94,21 +98,21 @@ public class ExportadorPDF {
         char[][] mapa = new char[Game.BOARD_SIZE][Game.BOARD_SIZE];
         for (int r = 0; r < Game.BOARD_SIZE; r++)
             for (int c = 0; c < Game.BOARD_SIZE; c++)
-                mapa[r][c] = '.';
+                mapa[r][c] = VAZIO;
 
         for (IShip navio : game.getMyFleet().getShips())
             for (IPosition pos : navio.getPositions())
-                mapa[pos.getRow()][pos.getColumn()] = '#';
+                mapa[pos.getRow()][pos.getColumn()] = NAVIO;
 
         for (IMove jogada : game.getAlienMoves())
             for (IPosition tiro : jogada.getShots())
                 if (tiro.isInside()) {
                     int r = tiro.getRow();
                     int c = tiro.getColumn();
-                    if (mapa[r][c] == '#')
-                        mapa[r][c] = '*';
-                    else if (mapa[r][c] == '.')
-                        mapa[r][c] = 'o';
+                    if (mapa[r][c] == NAVIO)
+                        mapa[r][c] = ACERTO;
+                    else if (mapa[r][c] == VAZIO)
+                        mapa[r][c] = AGUA;
                 }
 
         escreverLinha("Tabuleiro final", NEGRITO, 12);
