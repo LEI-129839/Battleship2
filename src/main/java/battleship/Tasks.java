@@ -99,15 +99,7 @@ public class Tasks {
 						myFleet.printStatus();
 						game.printMyBoard(true, false);
 
-						if (game.getRemainingShips() == 0) {
-
-							exportarPDF(game);
-							printTotalTime(gameClock, moveNumber);   // NOVO
-
-							game.over();
-							manager.registerWin("Java Sparrow");
-							System.exit(0);
-						}
+						checkGameOver(game, gameClock, moveNumber, manager);
 					}
 					break;
 				case SIMULA:
@@ -124,16 +116,7 @@ public class Tasks {
 							}
 						}
 
-						if (game.getRemainingShips() == 0) {
-
-							exportarPDF(game);
-
-							printTotalTime(gameClock, moveNumber);   // NOVO
-
-							game.over();
-							manager.registerWin("Java Sparrow");
-							System.exit(0);
-						}
+						checkGameOver(game, gameClock, moveNumber, manager);
 					}
 					break;
 				case SCORES:
@@ -166,6 +149,19 @@ public class Tasks {
 		printTotalTime(gameClock, moveNumber);   // NOVO: mostra o total se o jogador desistir
 		System.out.println(GOODBYE_MESSAGE);
 	}
+
+	private static void checkGameOver(IGame game, StopWatch gameClock, int moveNumber, ScoreboardManager manager) {
+		if (game.getRemainingShips() == 0) {
+
+			exportarPDF(game);
+			printTotalTime(gameClock, moveNumber);   // NOVO
+
+			game.over();
+			manager.registerWin("Java Sparrow");
+			System.exit(0);
+		}
+	}
+
 	/**
 	 * Formata um tempo em milissegundos no formato mm:ss.SSS
 	 *
