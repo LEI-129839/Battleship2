@@ -12,6 +12,7 @@ public class Game implements IGame
 
 	public static final String GAME_OVER_BORDER = "+--------------------------------------------------------------+";
 	public static final String GAME_OVER_MESSAGE = "| Maldito sejas, Java Sparrow, eu voltarei, glub glub glub ... |";
+	private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
 
 	/**
 	 * Prints the game board by representing the positions of ships, adjacent tiles,
@@ -124,8 +125,7 @@ public class Game implements IGame
 		assert shots != null;
 
 		// Serializar os tiros gerados em JSON usando a biblioteca Jackson
-		ObjectMapper objectMapper = new ObjectMapper();
-		objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+		JSON_MAPPER.enable(SerializationFeature.INDENT_OUTPUT);
 
 		// 1. Create a simplified list containing only the desired data
 		List<Map<String, Object>> simplifiedShots = new ArrayList<>();
@@ -140,7 +140,7 @@ public class Game implements IGame
 		String jsonString = null;
 		try {
 			// 2. Serialize the simplified list instead of the raw 'shots' list
-			jsonString = objectMapper.writeValueAsString(simplifiedShots);
+			jsonString = JSON_MAPPER.writeValueAsString(simplifiedShots);
 		} catch (JsonProcessingException e) {
 			throw new RuntimeException("Erro ao serializar o JSON", e);
 		}
