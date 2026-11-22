@@ -57,9 +57,10 @@ public class ExportadorPDF {
             return "repetido";
         if (resultado.ship() == null)
             return "água";
+        String categoria = resultado.ship().getCategory();
         if (resultado.sunk())
-            return resultado.ship().getCategory() + " ao fundo";
-        return "tiro em " + resultado.ship().getCategory();
+            return categoria + " ao fundo";
+        return "tiro em " + categoria;
     }
 
     public static void exportar(IGame game, String ficheiro) throws IOException {
