@@ -163,7 +163,7 @@ public class Game implements IGame
 	private final IFleet alienFleet;
 	private final List<IMove> myMoves;
 
-	private Integer countInvalidShots;
+	private int countInvalidShots;
 	private Integer countRepeatedShots;
 	private Integer countHits;
 	private Integer countSinks;
