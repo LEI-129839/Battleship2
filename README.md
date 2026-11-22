@@ -127,10 +127,20 @@ graph TD
 We use high-coverage unit testing to ensure game stability. Run tests using:
 ```bash
 mvn test
+
 ```
 
 > [!TIP]
 > Use the `-Dtest=ClassName` flag to run specific test suites during development.
+
+### ⚙️ Continuous Integration
+Unit tests run automatically through a GitHub Actions workflow
+(`.github/workflows/maven.yml`).
+
+- **What it does:** builds the project and runs the JUnit test suite with Maven (`mvn -B test`), using Java 21.
+- **When it runs:** on every push to any branch, and on pull requests targeting `main`.
+- **Where to see the result:** in the **Actions** tab of the GitHub repository. A green check means all tests passed; if it fails, open the run to see which tests broke.
+
 
 ---
 
@@ -215,3 +225,6 @@ acertou na segunda Nau. Na próxima rajada, caçar à volta de D6.
 Restam 1 Caravela e 2 Barcas. A Caravela só cabe onde houver 2 quadrículas
 livres seguidas fora de halos. Se só existirem duas zonas assim, dispare apenas
 nessas zonas.
+
+
+
