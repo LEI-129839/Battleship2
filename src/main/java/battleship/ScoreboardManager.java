@@ -2,6 +2,7 @@ package battleship;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -44,15 +45,7 @@ public class ScoreboardManager {
 
     // Método que deves chamar sempre que um jogador ganhar o jogo
     public void registerWin(String playerName) {
-        PlayerScore player = null;
-
-        // Procura se o jogador já existe na lista
-        for (PlayerScore p : scores) {
-            if (p.getPlayerName().equals(playerName)) {
-                player = p;
-                break;
-            }
-        }
+        PlayerScore player = findPlayer(playerName);
 
         // Se o jogador não existir, cria-o com 0 vitórias iniciais
         if (player == null) {
@@ -63,6 +56,19 @@ public class ScoreboardManager {
         // Adiciona a vitória e guarda o ficheiro atualizado
         player.addWin();
         saveScores();
+    }
+
+    private @Nullable PlayerScore findPlayer(String playerName) {
+        PlayerScore player = null;
+
+        // Procura se o jogador já existe na lista
+        for (PlayerScore p : scores) {
+            if (p.getPlayerName().equals(playerName)) {
+                player = p;
+                break;
+            }
+        }
+        return player;
     }
 
     // Devolve a lista de pontuações ordenada por número de vitórias (do maior para o menor)
