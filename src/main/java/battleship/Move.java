@@ -162,25 +162,11 @@ public class Move implements IMove {
 		response.put("missedShots", missedShots);
 
 		// Criar a lista de barcos afundados
-		List<Map<String, Object>> sunkBoats = new ArrayList<>();
-		for (Map.Entry<String, Integer> entry : sunkBoatsCount.entrySet()) {
-			Map<String, Object> boat = new HashMap<>();
-			boat.put("type", entry.getKey());
-			boat.put("count", entry.getValue());
-			sunkBoats.add(boat);
-		}
+		List<Map<String, Object>> sunkBoats = buildSunkBoatsList(sunkBoatsCount);
 		response.put("sunkBoats", sunkBoats);
 
 		// Criar a lista de acertos em barcos que não foram afundados
-		List<Map<String, Object>> boatHits = new ArrayList<>();
-		for (Map.Entry<String, Integer> entry : hitsPerBoat.entrySet()) {
-			if (!sunkBoatsCount.containsKey(entry.getKey())) {
-				Map<String, Object> boat = new HashMap<>();
-				boat.put("type", entry.getKey());
-				boat.put("hits", entry.getValue());
-				boatHits.add(boat);
-			}
-		}
+		List<Map<String, Object>> boatHits = buildBoatHitsList(hitsPerBoat, sunkBoatsCount);
 		response.put("hitsOnBoats", boatHits);
 
 		// Serializar o JSON utilizando Jackson
@@ -201,5 +187,43 @@ public class Move implements IMove {
 
 		// Retornar o JSON
 		return jsonString;
+	}
+
+	/**
+	 * Builds the JSON-ready list of sunk boats, one entry per boat type with the number sunk.
+	 *
+	 * @param sunkBoatsCount number of boats sunk per boat type
+	 * @return a list of maps with the keys {@code type} and {@code count}
+	 */
+	private static List<Map<String, Object>> buildSunkBoatsList(Map<String, Integer> sunkBoatsCount) {
+		List<Map<String, Object>> sunkBoats = new ArrayList<>();
+		for (Map.Entry<String, Integer> entry : sunkBoatsCount.entrySet()) {
+			Map<String, Object> boat = new HashMap<>();
+			boat.put("type", entry.getKey());
+			boat.put("count", entry.getValue());
+			sunkBoats.add(boat);
+		}
+		return sunkBoats;
+	}
+
+	/**
+	 * Builds the JSON-ready list of hits on boats of a type that had no boat sunk in this move.
+	 *
+	 * @param hitsPerBoat    number of hits per boat type
+	 * @param sunkBoatsCount number of boats sunk per boat type
+	 * @return a list of maps with the keys {@code type} and {@code hits}
+	 */
+	private static List<Map<String, Object>> buildBoatHitsList(Map<String, Integer> hitsPerBoat,
+															   Map<String, Integer> sunkBoatsCount) {
+		List<Map<String, Object>> boatHits = new ArrayList<>();
+		for (Map.Entry<String, Integer> entry : hitsPerBoat.entrySet()) {
+			if (!sunkBoatsCount.containsKey(entry.getKey())) {
+				Map<String, Object> boat = new HashMap<>();
+				boat.put("type", entry.getKey());
+				boat.put("hits", entry.getValue());
+				boatHits.add(boat);
+			}
+		}
+		return boatHits;
 	}
 }
