@@ -25,7 +25,8 @@ class AiShotStrategyTest {
     @BeforeEach
     void setUp() {
         strategy = new AiShotStrategy();
-        game = new Game(new Fleet());
+        // o jogo vem de uma GameSession, tal como acontece no servidor REST
+        game = new GameSession("jogo-ia", "Aluno", "http://localhost:9090").getGame();
         barca = new Barge(Compass.NORTH, new Position(5, 5));
     }
 
