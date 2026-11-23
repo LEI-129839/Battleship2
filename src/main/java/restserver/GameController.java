@@ -123,7 +123,7 @@ public class GameController {
 		if (game.getRemainingShips() == 0) {
 			session.markStudentWins();
 			m1bResponse.gameStatus = "GAME_OVER";
-			m1bResponse.winner     = "STUDENT_WINS";
+			m1bResponse.winner     = GameSession.STUDENT_WINS;
 			System.out.printf("[%s] GAME OVER — student '%s' wins!%n",
 					gameId, session.getPlayerName());
 			return ResponseEntity.ok(m1bResponse);

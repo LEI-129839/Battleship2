@@ -92,12 +92,12 @@ public abstract class Ship implements IShip
 	/**
 	 * The size
 	 */
-	private Integer size;
+	private int size;
 
 	/**
 	 * The Positions occupied by the ship.
 	 */
-	protected List<IPosition> positions;
+	private List<IPosition> positions;
 
 	/**
 	 * Create ships
@@ -205,7 +205,7 @@ public abstract class Ship implements IShip
 	 *
 	 * @return the size
 	 */
-	public Integer getSize()
+	public int getSize()
 	{
 		return size;
 	}
@@ -419,6 +419,34 @@ public abstract class Ship implements IShip
 	public void sink() {
 		for (IPosition position : getPositions())
 			position.shoot();
+	}
+
+	/**
+	 * Fills the positions of a ship laid out in a straight line, vertically for
+	 * NORTH/SOUTH and horizontally for EAST/WEST, starting at the given position.
+	 *
+	 * @param bearing The bearing of the ship.
+	 * @param pos     The initial position of the ship on the game board.
+	 */
+	protected void fillLinearPositions(Compass bearing, IPosition pos) {
+		switch (bearing) {
+			case NORTH:
+				for (int r = 0; r < this.getSize(); r++)
+					getPositions().add(new Position(pos.getRow() + r, pos.getColumn()));
+				break;
+			case SOUTH:
+				for (int r = 0; r < this.getSize(); r++)
+					getPositions().add(new Position(pos.getRow() + r, pos.getColumn()));
+				break;
+			case EAST:
+				for (int c = 0; c < this.getSize(); c++)
+					getPositions().add(new Position(pos.getRow(), pos.getColumn() + c));
+				break;
+			case WEST:
+				for (int c = 0; c < this.getSize(); c++)
+					getPositions().add(new Position(pos.getRow(), pos.getColumn() + c));
+				break;
+		}
 	}
 
 	/**

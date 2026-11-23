@@ -97,10 +97,11 @@ public class AiShotStrategy {
 		// Gather all positions the AI hit
 		List<IPosition> hits = new ArrayList<>();
 		for (IMove move : game.getAlienMoves()) {
+			List<IGame.ShotResult> results = move.getShotResults();
 			for (int i = 0; i < move.getShots().size(); i++) {
-				IGame.ShotResult result = move.getShotResults().isEmpty()
+				IGame.ShotResult result = results.isEmpty()
 						? null
-						: (i < move.getShotResults().size() ? move.getShotResults().get(i) : null);
+						: (i < results.size() ? results.get(i) : null);
 
 				// If we have result metadata, use it precisely
 				if (result != null && result.valid() && !result.repeated()
