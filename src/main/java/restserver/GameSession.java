@@ -12,6 +12,12 @@ import battleship.IGame;
  */
 public class GameSession {
 
+	/** Value of {@link #getWinner()} when the AI sinks the student's fleet. */
+	public static final String AI_WINS = "AI_WINS";
+
+	/** Value of {@link #getWinner()} when the student sinks the AI's fleet. */
+	public static final String STUDENT_WINS = "STUDENT_WINS";
+
 	/** Unique identifier for this game, returned to the student on registration. */
 	private final String gameId;
 
@@ -67,11 +73,11 @@ public class GameSession {
 
 	public void markAiWins() {
 		this.gameOver = true;
-		this.winner   = "AI_WINS";
+		this.winner   = AI_WINS;
 	}
 
 	public void markStudentWins() {
 		this.gameOver = true;
-		this.winner   = "STUDENT_WINS";
+		this.winner   = STUDENT_WINS;
 	}
 }
