@@ -19,6 +19,17 @@ public class Caravel extends Ship {
 	public Caravel(Compass bearing, IPosition pos) {
 		super("Caravela", bearing, pos, 2);
 
+		fillLinearPositions(bearing, pos);
+	}
+
+	/**
+	 * Fills the positions of a ship laid out in a straight line, vertically for
+	 * NORTH/SOUTH and horizontally for EAST/WEST, starting at the given position.
+	 *
+	 * @param bearing The bearing of the ship.
+	 * @param pos     The initial position of the ship on the game board.
+	 */
+	private void fillLinearPositions(Compass bearing, IPosition pos) {
 		switch (bearing) {
 			case NORTH:
 				for (int r = 0; r < this.getSize(); r++)
